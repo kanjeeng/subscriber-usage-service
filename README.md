@@ -35,49 +35,78 @@ Dalam penyelesaian proyek ini, alur kerja dibagi menjadi empat komponen utama:
   Menganalisis kesalahan logika pada fungsi perulangan reduce di JavaScript, melakukan perbaikan kode agar tahan terhadap data yang tidak valid, serta merumuskan strategi pencegahan bug serupa.
 
 ---
-
-## 3. Struktur Berkas dan Direktori
-
-Berikut adalah struktur lengkap direktori proyek beserta penjelasan fungsi dari masing-masing berkas:
-
-subscriber-usage-service/
-├── package.json          - Konfigurasi proyek Node.js, dependensi, dan definisi npm scripts.
-├── .gitignore            - Daftar berkas dan direktori yang dikecualikan dari repositori Git.
-├── .env.example          - Templat variabel lingkungan (environment variables).
-├── eslint.config.js      - Konfigurasi aturan pemindaian kode statis (linter).
-├── crontab.example       - Referensi konfigurasi cron job untuk sistem operasi Linux.
-├── README.md             - Dokumentasi utama panduan operasional proyek.
-├── src/
-│   ├── server-db.js      - Entry point utama peladen Express.js berbasis database PostgreSQL.
-│   ├── app.js            - Definisi aplikasi Express.js, pendaftaran rute API, dan middleware error handling.
-│   ├── service.js        - Logika bisnis utama pencatatan, pemfilteran, dan agregasi data.
-│   ├── validation.js     - Modul validasi ketat untuk tipe data dan format payload request.
-│   ├── lib/
-│   │   ├── csv.js        - Utilitas konversi objek JSON ke format CSV beserta prosedur escaping.
-│   │   └── time.js       - Utilitas manipulasi waktu dan format nama file berbasis zona waktu WIB.
-│   ├── server.js         - (Legacy) Entry point untuk mode in-memory (bisa dipertahankan untuk test).
-│   ├── store.js          - (Legacy) Modul penyimpanan memori sementara.
-│   └── seed.js           - (Legacy) Data awal sampel in-memory.
-├── scripts/
-│   ├── snapshot.js       - Skrip pengambil data dari API dan penyimpan file CSV secara atomik.
-│   ├── scheduler.js      - Proses penjadwal otomatis berbasis cron untuk snapshot dan cleanup.
-│   └── cleanup.js        - Skrip pemindai dan pembersih file CSV snapshot lama (> 30 hari).
-├── sql/
-│   ├── schema.sql        - Skema pembuatan tabel basis data dan data sampel.
-│   └── queries.sql       - Kumpulan kueri SQL untuk menjawab instruksi Q3.
-├── q4/
-│   └── getTotalUsageMB.js - Implementasi fungsi buggy dan perbaikan untuk Q4.
-├── tests/
-│   ├── service.test.js   - Pengujian otomatis untuk rute API dan logika bisnis.
-│   ├── automation.test.js - Pengujian skrip snapshot, penjadwal, dan cleanup.
-│   ├── lib.test.js       - Pengujian fungsi utilitas CSV dan waktu WIB.
-│   └── q4.test.js        - Pengujian unit untuk validasi fungsi Q4.
-├── public/
-│   └── index.html        - Antarmuka web frontend sederhana untuk interaksi API.
-├── snapshots/            - Direktori tempat penyimpanan file output CSV snapshot.
-└── logs/                 - Direktori tempat penyimpanan log eksekusi sistem.
-
 ---
+
+## 3. Struktur Berkas dan Direktori Proyek
+
+```text
+subscriber-usage-service/
+├── package.json
+├── .gitignore
+├── .env.example
+├── eslint.config.js
+├── crontab.example
+├── README.md
+├── src/
+├── scripts/
+├── sql/
+├── q4/
+├── tests/
+├── public/
+├── snapshots/
+└── logs/
+
+```
+
+### Penjelasan Detail Fungsi Berkas & Direktori
+
+Berikut adalah rincian fungsi dari masing-masing komponen di dalam proyek:
+
+#### A. Berkas Konfigurasi Utama (Root)
+
+* **`package.json`**: Berisi konfigurasi proyek Node.js, daftar dependensi pustaka, serta definisi skrip otomatisasi (`npm scripts`).
+* **`.gitignore`**: Daftar berkas dan direktori yang dikecualikan agar tidak ikut terunggah ke repositori Git (seperti `node_modules`, `.env`, dll).
+* **`.env.example`**: Berkas templat untuk variabel lingkungan (*environment variables*).
+* **`eslint.config.js`**: Aturan pemindaian dan pemeriksaan kualitas kode statis (*linter*).
+* **`crontab.example`**: Referensi konfigurasi penjadwalan *cron job* untuk sistem operasi Linux.
+* **`README.md`**: Dokumentasi utama panduan operasional proyek.
+
+#### B. Direktori Sumber Kode (`src/`)
+
+* **`server-db.js`**: Titik masuk (*entry point*) utama peladen Express.js yang terhubung langsung ke basis data relasional PostgreSQL.
+* **`app.js`**: Definisi aplikasi Express.js, pendaftaran rute API, dan middleware penanganan kesalahan (*error handling*).
+* **`service.js`**: Logika bisnis utama untuk pencatatan, pemfilteran, dan agregasi data.
+* **`validation.js`**: Modul validasi ketat untuk tipe data dan format payload permintaan (*request*).
+* **`server.js`**: *(Legacy)* Titik masuk alternatif untuk mode penyimpanan memori sementara (*in-memory*).
+* **`store.js`**: *(Legacy)* Modul penyimpanan data berbasis memori sementara.
+* **`seed.js`**: *(Legacy)* Data awal sampel untuk mode memori.
+* **`src/lib/csv.js`**: Utilitas untuk mengonversi objek JSON ke format CSV beserta prosedur *escaping*.
+* **`src/lib/time.js`**: Utilitas manipulasi waktu dan format penamaan berkas berbasis zona waktu WIB.
+
+#### C. Direktori Skrip Otomatisasi (`scripts/`)
+
+* **`snapshot.js`**: Skrip mandiri untuk mengambil data dari API dan menyimpannya ke berkas CSV secara atomik.
+* **`scheduler.js`**: Proses latar belakang penjadwal otomatis berbasis *cron* untuk eksekusi snapshot dan pembersihan berkas.
+* **`cleanup.js`**: Skrip pemindai dan pembersih berkas CSV snapshot lama yang melebihi batas retensi (> 30 hari).
+
+#### D. Direktori Basis Data & SQL (`sql/`)
+
+* **`schema.sql`**: Berisi skema pembuatan tabel relasional basis data beserta data sampel awalnya.
+* **`queries.sql`**: Kumpulan kueri SQL lengkap untuk menjawab instruksi pengujian pada bagian Q3.
+
+#### E. Direktori Troubleshooting & Pengujian (`q4/` & `tests/`)
+
+* **`q4/getTotalUsageMB.js`**: Implementasi fungsi awal yang mengalami galat (*buggy*) beserta perbaikannya untuk tugas Q4.
+* **`tests/service.test.js`**: Pengujian otomatis untuk rute API dan logika bisnis.
+* **`tests/automation.test.js`**: Pengujian otomatis untuk skrip snapshot, penjadwal, dan pembersihan berkas.
+* **`tests/lib.test.js`**: Pengujian unit untuk fungsi utilitas CSV dan format waktu WIB.
+* **`tests/q4.test.js`**: Pengujian unit untuk memvalidasi perbaikan fungsi pada Q4.
+
+#### F. Direktori Antarmuka, Output, & Log (`public/`, `snapshots/`, `logs/`)
+
+* **`public/index.html`**: Antarmuka web *frontend* sederhana untuk berinteraksi langsung dengan API.
+* **`snapshots/`**: Direktori tempat penyimpanan hasil keluaran berkas laporan berformat CSV.
+* **`logs/`**: Direktori tempat penyimpanan catatan log eksekusi sistem.
 
 ## 4. Rincian Pengujian (Testing)
 
