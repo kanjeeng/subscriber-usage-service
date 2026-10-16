@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Subscriber Usage</title>
+<style>
+  :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+  body { max-width: 860px; margin: 2rem auto; padding: 0 1rem; }
+  form { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .5rem; margin-bottom: 1rem; }
+  input, button { padding: .5rem; font: inherit; }
+  table { border-collapse: collapse; width: 100%; margin: .5rem 0 1.5rem; }
+  th, td { border-bottom: 1px solid #8884; padding: .4rem .5rem; text-align: left; }
+  #msg { min-height: 1.5rem; }
+  .err { color: #c0392b; }
+</style>
+</head>
+<body>
+<h1>Subscriber Usage</h1>
+<form id="f">
+  <input name="subscriberId" placeholder="subscriberId" required>
+  <input name="callMinutes" type="number" min="0" step="any" placeholder="callMinutes" required>
+  <input name="smsCount" type="number" min="0" step="1" placeholder="smsCount" required>
+  <input name="dataUsageMB" type="number" min="0" step="any" placeholder="dataUsageMB" required>
+  <button>Simpan</button>
+</form>
+<div id="msg"></div>
+
+<h2>Ringkasan per subscriber</h2>
+<table id="sum"></table>
+<h2>Semua record</h2>
+<table id="all"></table>
+
+<script>
+const $ = (id) => document.getElementById(id);
+
+function render(table, cols, rows) {
+  table.replaceChildren();
+  const head = table.insertRow();
+  cols.forEach((c) => { const th = document.createElement('th'); th.textContent = c; head.appendChild(th); });
+  rows.forEach((r) => {
+    const tr = table.insertRow();
+    cols.forEach((c) => { tr.insertCell().textContent = r[c]; });
+  });
+}
+
+async function load() {
+  const [all, sum] = await Promise.all([
+    fetch('/api/usage').then((r) => r.json()),
+    fetch('/api/usage/summary').then((r) => r.json()),
+  ]);
+  render($('all'), ['id', 'subscriberId', 'callMinutes', 'smsCount', 'dataUsageMB', 'timestamp'], all.data);
+  render($('sum'), ['subscriberId', 'snapshots', 'totalCallMinutes', 'totalSmsCount', 'totalDataUsageMB', 'avgCallMinutes'], sum.data);
+}
+
+$('f').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const body = {
+    subscriberId: fd.get('subscriberId'),
+    callMinutes: Number(fd.get('callMinutes')),
+    smsCount: Number(fd.get('smsCount')),
+    dataUsageMB: Number(fd.get('dataUsageMB')),
+  };
+  const res = await fetch('/api/usage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const json = await res.json();
+  $('msg').className = res.ok ? '' : 'err';
+  $('msg').textContent = res.ok ? `Tersimpan (id ${json.data.id})` : (json.details || [json.error]).join('; ');
+  if (res.ok) { e.target.reset(); load(); }
+});
+
+load();
+</script>
+</body>
+</html>

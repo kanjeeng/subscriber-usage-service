@@ -1,0 +1,12 @@
+# Alternatif tanpa node-cron: pakai crontab sistem operasi.
+# Pasang dengan:  crontab -e   (ganti /path/to/subscriber-usage-service)
+#
+# Opsi A - server Linux (cronie) mendukung CRON_TZ:
+CRON_TZ=Asia/Jakarta
+0 8,12,15 * * *  cd /path/to/subscriber-usage-service && /usr/bin/node scripts/snapshot.js >> logs/snapshot.log 2>&1
+30 0 * * *       cd /path/to/subscriber-usage-service && /usr/bin/node scripts/cleanup.js  >> logs/cleanup.log  2>&1
+
+# Opsi B - server berzona UTC (WIB = UTC+7, tidak ada DST):
+# 08:00/12:00/15:00 WIB  ==  01:00/05:00/08:00 UTC
+# 0 1,5,8 * * *  cd /path/to/subscriber-usage-service && /usr/bin/node scripts/snapshot.js >> logs/snapshot.log 2>&1
+# 30 17 * * *    cd /path/to/subscriber-usage-service && /usr/bin/node scripts/cleanup.js  >> logs/cleanup.log  2>&1

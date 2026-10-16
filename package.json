@@ -1,0 +1,31 @@
+{
+  "name": "subscriber-usage-service",
+  "version": "1.0.0",
+  "description": "Subscriber usage API, snapshot automation, SQL & troubleshooting solutions",
+  "main": "src/server.js",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+  "start": "node src/server.js",
+  "start:env": "node --env-file=.env src/server.js",
+  "prod": "node --env-file=.env src/server-db.js",
+  "db": "node --env-file=.env src/server-db.js",
+  "snapshot": "node --env-file=.env scripts/snapshot.js", 
+  "scheduler": "node scripts/scheduler.js",
+  "scheduler:env": "node --env-file=.env scripts/scheduler.js",
+  "cleanup": "node scripts/cleanup.js",
+  "cleanup:dry": "node scripts/cleanup.js --dry-run",
+  "test": "node --test",
+  "lint": "eslint ."
+},
+  "dependencies": {
+    "express": "^4.19.2",
+    "node-cron": "^3.0.3",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0"
+  }
+}
