@@ -48,16 +48,16 @@ subscriber-usage-service/
 ├── crontab.example       - Referensi konfigurasi cron job untuk sistem operasi Linux.
 ├── README.md             - Dokumentasi utama panduan operasional proyek.
 ├── src/
-│   ├── server.js         - Entry point utama untuk menginisialisasi store dan menjalankan HTTP server.
-│   ├── server-db.js      - Entry point untuk menginisialisasi store dan menjalankan HTTP server yang menggunakan database sql.
+│   ├── server-db.js      - Entry point utama peladen Express.js berbasis database PostgreSQL.
 │   ├── app.js            - Definisi aplikasi Express.js, pendaftaran rute API, dan middleware error handling.
 │   ├── service.js        - Logika bisnis utama pencatatan, pemfilteran, dan agregasi data.
-│   ├── store.js          - Modul pengelolaan penyimpanan data sementara di memori (in-memory storage).
 │   ├── validation.js     - Modul validasi ketat untuk tipe data dan format payload request.
-│   ├── seed.js           - Data awal sampel untuk inisialisasi awal aplikasi.
-│   └── lib/
-│       ├── csv.js        - Utilitas konversi objek JSON ke format CSV beserta prosedur escaping.
-│       └── time.js       - Utilitas manipulasi waktu dan format nama file berbasis zona waktu WIB.
+│   ├── lib/
+│   │   ├── csv.js        - Utilitas konversi objek JSON ke format CSV beserta prosedur escaping.
+│   │   └── time.js       - Utilitas manipulasi waktu dan format nama file berbasis zona waktu WIB.
+│   ├── server.js         - (Legacy) Entry point untuk mode in-memory (bisa dipertahankan untuk test).
+│   ├── store.js          - (Legacy) Modul penyimpanan memori sementara.
+│   └── seed.js           - (Legacy) Data awal sampel in-memory.
 ├── scripts/
 │   ├── snapshot.js       - Skrip pengambil data dari API dan penyimpan file CSV secara atomik.
 │   ├── scheduler.js      - Proses penjadwal otomatis berbasis cron untuk snapshot dan cleanup.
@@ -66,12 +66,12 @@ subscriber-usage-service/
 │   ├── schema.sql        - Skema pembuatan tabel basis data dan data sampel.
 │   └── queries.sql       - Kumpulan kueri SQL untuk menjawab instruksi Q3.
 ├── q4/
-│   └── getTotalUsageMB.js - Implementasi fungsi buggy dan fungsi perbaikan untuk Q4.
+│   └── getTotalUsageMB.js - Implementasi fungsi buggy dan perbaikan untuk Q4.
 ├── tests/
-│   ├── service.test.js   - Pengujian otomatis untuk rute API dan logika bisnis service.
-│   ├── automation.test.js- Pengujian skrip snapshot, penjadwal, dan prosedur cleanup.
-│   ├── lib.test.js       - Pengujian fungsi utilitas pencetakan CSV dan penanganan waktu WIB.
-│   └── q4.test.js        - Pengujian unit untuk validasi fungsi perbaikan Q4.
+│   ├── service.test.js   - Pengujian otomatis untuk rute API dan logika bisnis.
+│   ├── automation.test.js - Pengujian skrip snapshot, penjadwal, dan cleanup.
+│   ├── lib.test.js       - Pengujian fungsi utilitas CSV dan waktu WIB.
+│   └── q4.test.js        - Pengujian unit untuk validasi fungsi Q4.
 ├── public/
 │   └── index.html        - Antarmuka web frontend sederhana untuk interaksi API.
 ├── snapshots/            - Direktori tempat penyimpanan file output CSV snapshot.
@@ -112,6 +112,7 @@ Cakupan pengujian meliputi:
 - Node.js versi 18.0.0 atau lebih baru (disarankan versi LTS 20/22).
 - npm (Node Package Manager).
 - Git.
+- Docker.
 
 ### 1. Instalasi Dependensi
 Jalankan perintah berikut pada terminal di direktori utama proyek:
